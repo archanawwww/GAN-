@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FashionAI - Generate Unique Fashion with AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: rgb(205, 213, 206);
+            --secondary-color: #314c3c;
+            --accent-color: #691922;
+            --text-color: #060606;
+            --light-text: #555c59;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: rgb(188, 52, 66);
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin: 0 1rem;
+        }
+
+        nav ul li a {
+            color: #f0f2e9;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--accent-color);
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: rgb(163, 188, 166);
+            padding: 0 1rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+
+       
+
+
+        .hero h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            line-height: 1.4;
+            animation: fadeIn 1.3s ease-in-out;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin: 0 0.5rem;
+            animation: fadeIn 1.6s ease-in-out;
+        }
+
+        .btn:hover {
+            background-color: rgb(195, 119, 119);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid rgb(177, 138, 138);
+        }
+
+        .btn-outline:hover {
+            background-color: rgb(195, 119, 119);
+            color: black;
+        }
+
+        .features {
+            background-color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .section-title {
+            background-color: rgb(215, 227, 208);
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            padding: 2rem;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+        }
+
+
+
+
+
+
+
+        
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .feature-desc {
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+
+        .demo {
+            padding: 6rem 2rem;
+            background-color: rgba(173, 74, 74, 0.05);
+            text-align: center
+        ;
+        }
+
+        .generator-container {
+            max-width: 900px;
+            margin: 3rem auto;
+            background-color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.result-item img.generated-img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+        .generator-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .slider-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 1.5rem 0;
+        }
+
+        .slider-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #e5e5e5;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .result-item {
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            aspect-ratio: 1;
+            position: relative;
+        }
+
+        .result-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+           
+
+
+
+.enhanced-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(1.2) contrast(1.1);
+    image-rendering: pixelated; /* Try crisp-edges or auto depending on browser */
+    transform: translateZ(0); /* Forces hardware acceleration */
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+
+
+
+
+        .result-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .generate-btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .generate-btn:hover {
+            background-color: #560405;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--secondary-color);
+            margin: 0 1rem;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: #424244;
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 113, 227, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero h2 {
+                font-size: 1.2rem;
+            }
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            header {
+                padding: 1rem;
+            }
+            nav ul li {
+                margin: 0 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+   <div class="video-container">
+    <video autoplay muted loop playsinline class="enhanced-video">
+        <source src="49252-459186552.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+
+
+    <div class="overlay"></div>
+
+    <header>
+        <div class="logo">LUXORA.AI</div>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#demo">Try It</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#tech">Technology</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Generate Fashion with AI</h1>
+        <h2>Create unique, AI-generated fashion designs with our state-of-the-art GAN technology. Revolutionize how you visualize and create fashion.</h2>
+        <div>
+            <a href="#demo" class="btn">Try Generator</a>
+            <a href="#about" class="btn btn-outline">Learn More</a>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <h2 class="section-title">Features</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <h3 class="feature-title">Generate Unique Fashion</h3>
+                <p class="feature-desc">Create one-of-a-kind fashion pieces that have never existed before using cutting-edge AI technology.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <h3 class="feature-title">Customizable Parameters</h3>
+                <p class="feature-desc">Adjust generation parameters to influence the style, complexity, and uniqueness of your AI-created fashion items.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h3 class="feature-title">Export in High Quality</h3>
+                <p class="feature-desc">Download your generated fashion designs in high resolution for use in your projects, presentations or inspiration boards.</p>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="demo" id="demo" style="background-image: url('e65e9117f6ffd413637aa07be189b8d5.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+  <h2 class="section-title">Fashion Generator</h2>
+  <div class="generator-container">
+    <div class="generator-controls">
+      <div class="slider-container">
+        <label class="slider-label" for="complexity">Complexity</label>
+        <input type="range" min="0" max="100" value="50" class="slider" id="complexity">
+      </div>
+      <div class="slider-container">
+        <label class="slider-label" for="style">Style Variation</label>
+        <input type="range" min="0" max="100" value="50" class="slider" id="style">
+      </div>
+      
+      
+        
+      <button class="generate-btn" id="generateBtn">Generate Fashion</button>
+    </div>
+
+    <div class="result-grid" id="resultGrid">
+      <!-- 4 result items -->
+      <div class="result-item"><div class="result-placeholder">Generated image will appear here</div></div>
+      <div class="result-item"><div class="result-placeholder">Generated image will appear here</div></div>
+      <div class="result-item"><div class="result-placeholder">Generated image will appear here</div></div>
+      <div class="result-item"><div class="result-placeholder">Generated image will appear here</div></div>
+    </div>
+  </div>
+
+  
+</section>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    <section class="features" id="tech">
+        <h2 class="section-title">Technology</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="feature-title">GANs Architecture</h3>
+                <p class="feature-desc">Built using Generative Adversarial Networks that have been trained on thousands of fashion items to create new, original designs.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <h3 class="feature-title">TensorFlow Powered</h3>
+                <p class="feature-desc">Developed with Google's TensorFlow, ensuring high performance and cutting-edge AI capabilities.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="feature-title">Fashion MNIST Dataset</h3>
+                <p class="feature-desc">Trained on the famous Fashion MNIST dataset with 60,000+ fashion items for exceptional variety and results.</p>
+            </div>
+        </div>
+    </section>
+
+
+<section class="demo" id="about" style="position: relative; background-image: url('e65e9117f6ffd413637aa07be189b8d5.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; color: rgb(16, 15, 15); padding: 4rem 1rem;">
+    
+    <!-- Overlay for better text visibility -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 1;"></div>
+
+    <!-- Content -->
+    <div style="position: relative; z-index: 2; max-width: 800px; margin: 0 auto; line-height: 1.6; text-align: left;">
+        <h2 class="section-title" style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem;">About LUXORA.AI</h2>
+        
+        <p style="margin-bottom: 1.5rem;background-repeat: no-repeat; color: rgb(255, 255, 255)">
+            LUXORA.AI represents the future of fashion design and visualization. Our platform utilizes 
+            state-of-the-art Generative Adversarial Networks (GANs) trained on fashion datasets to create 
+            unique, never-before-seen fashion items.
+        </p>
+        <p style="margin-bottom: 1.5rem;background-repeat: no-repeat; color: rgb(255, 255, 255)">
+            Whether you're a fashion designer looking for inspiration, a retailer exploring new styles, or just 
+            curious about the potential of AI in creative industries, our tool provides endless possibilities.
+        </p>
+        <p style="margin-bottom: 1.5rem;background-repeat: no-repeat; color: rgb(255, 255, 255)">
+            The technology behind FashionAI is based on deep learning architectures that can understand and generate 
+            complex patterns and designs. Our generator model has been trained for thousands of iterations to produce 
+            high-quality, realistic fashion items that push the boundaries of creative design.
+        </p>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+            <a href="#">API</a>
+        </div>
+        <p class="copyright">© 2025 LUXORA.AI. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generateBtn');
+            const resultItems = document.querySelectorAll('.result-item');
+            const loadingElements = document.querySelectorAll('.loading');
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Generate images on button click
+            generateBtn.addEventListener('click', function() {
+                // Show loading spinners
+                loadingElements.forEach(loading => {
+                    loading.style.display = 'flex';
+                });
+
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Get parameter values
+                    const complexity = document.getElementById('complexity').value;
+                    const style = document.getElementById('style').value;
+                    const uniqueness = document.getElementById('uniqueness').value;
+
+                    // Prepare data for API call
+                    const data = {
+                        complexity: complexity / 100,
+                        style: style / 100,
+                        uniqueness: uniqueness / 100
+                    };
+
+                    // Make API call
+                    fetch('/api/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update UI with generated images
+                        resultItems.forEach((item, index) => {
+                            if (data.images && data.images[index]) {
+                                const placeholder = item.querySelector('.result-placeholder');
+                                if (placeholder) placeholder.style.display = 'none';
+                                
+                                // Create or update image
+                                let img = item.querySelector('.result-img');
+                                if (!img) {
+                                    img = document.createElement('img');
+                                    img.classList.add('result-img');
+                                    item.appendChild(img);
+                                }
+                                img.src = data.images[index];
+                                img.style.display = 'block';
+                            }
+                            
+                            // Hide loading spinner
+                            const loading = item.querySelector('.loading');
+                            if (loading) loading.style.display = 'none';
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Fallback for demo - replace with placeholder images
+                        resultItems.forEach((item, index) => {
+                            const placeholder = item.querySelector('.result-placeholder');
+                            if (placeholder) placeholder.style.display = 'none';
+                            
+                            // Create or update image with placeholder
+                            let img = item.querySelector('.result-img');
+                            if (!img) {
+                                img = document.createElement('img');
+                                img.classList.add('result-img');
+                                item.appendChild(img);
+                            }
+                            img.src = `/api/placeholder/200/200`;
+                            img.style.display = 'block';
+                            
+                            // Hide loading spinner
+                            const loading = item.querySelector('.loading');
+                            if (loading) loading.style.display = 'none';
+                        });
+                    });
+                }, 1500); // Simulated delay for loading effect
+            });
+        });
+    </script>
+</body>
+</html>
+
+<script>
+  const generateBtn = document.getElementById('generateBtn');
+  const resultItems = document.querySelectorAll('.result-item');
+  const complexitySlider = document.getElementById('complexity');
+  const styleSlider = document.getElementById('style');
+  const uniquenessSlider = document.getElementById('uniqueness');
+
+  const allImages = [
+    'fashion_mnist-3,0,1-Picsart-CropImage (1).png',
+    'fashion_mnist-3,0,1-Picsart-CropImage (2).png',
+    'fashion_mnist-3,0,1-Picsart-CropImage.png',
+    'FashionMnistData 2.jpg',
+    'FashionMnistData 2.jpg',
+    'FashionMnistData 3-Picsart-CropImage (1).jpg',
+    'FashionMnistData 3-Picsart-CropImage (2).jpg',
+    'FashionMnistData 3-Picsart-CropImage (4).jpg',
+    'FashionMnistData 3-Picsart-CropImage (5).jpg',
+    'FashionMnistData 3-Picsart-CropImage (6).jpg',
+    'FashionMnistData 3-Picsart-CropImage (7).jpg',
+    'FashionMnistData 3-Picsart-CropImage.jpg'
+  ];
+
+  let imageIndex = 0;
+
+  function getBlurValue(complexity) {
+    const maxBlur = 8;
+    return ((100 - complexity) / 100) * maxBlur;
+  }
+
+  function updateImages() {
+    const complexity = complexitySlider.value;
+    const blurValue = getBlurValue(complexity);
+
+    resultItems.forEach((item, i) => {
+      const imgSrc = allImages[(imageIndex + i) % allImages.length];
+      item.innerHTML = `
+        <img 
+          src="${imgSrc}" 
+          alt="Fashion Image ${(imageIndex + i) % allImages.length + 1}" 
+          style="width: 100%; border-radius: 10px; filter: blur(${blurValue}px);"
+        />
+        <div class="noise-overlay"></div>
+      `;
+    });
+
+    updateNoiseOpacity();
+  }
+
+  function updateNoiseOpacity() {
+    const uniquenessValue = uniquenessSlider.value;
+    // Map uniqueness (0-100) to opacity (0-0.5) for noise overlay
+    const opacity = uniquenessValue / 200; // max 0.5 opacity
+
+    document.querySelectorAll('.noise-overlay').forEach(noiseDiv => {
+      noiseDiv.style.opacity = opacity;
+    });
+  }
+
+  generateBtn.addEventListener('click', () => {
+    // Update imageIndex when style slider changes on click
+    imageIndex = (parseInt(styleSlider.value) * 4) % allImages.length;
+    updateImages();
+  });
+
+  // Remove complexitySlider and styleSlider input listeners to prevent immediate update
+  // Only uniqueness slider updates on input:
+
+  uniquenessSlider.addEventListener('input', () => {
+    updateNoiseOpacity();
+  });
+
+  // Initial load: no image yet or you can uncomment to show images at first load
+  // updateImages();
+</script>
+
+
+
+
